@@ -10,7 +10,7 @@ import time
 from random import random, randint
 
 def process_img(image_path):
-    time.sleep(0.5)
+    time.sleep(1.5)
 
 
 def parseExpRoot(hash_in):
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
             result_hash = "%s:res:%s:%s:%s" % (exp_root, all_vars["Row"], all_vars["Nozzle"], all_vars["LoopID"])
 
-            result_dict = {}
+            results = {}
             results["volume"] = "%s" % ('%.2f' % (randint(0, 99)/100) )
             results["vel"] = "%s" % ('%.2f' % (randint(30, 70)/10) )
 
