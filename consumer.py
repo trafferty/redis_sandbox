@@ -10,7 +10,7 @@ import time
 from random import random, randint
 
 def process_img(image_path):
-    time.sleep(1.5)
+    time.sleep(0.5)
 
 
 def parseExpRoot(hash_in):
@@ -33,7 +33,8 @@ if __name__ == '__main__':
     r = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 
     while not done:
-        loop_hash = r.lpop('new_image_data')
+        #loop_hash = r.lpop('new_image_data')
+        l, loop_hash = r.blpop('new_image_data', 2)
         if loop_hash:
             print(loop_hash)
             loop_vars = r.hgetall(loop_hash)
@@ -50,8 +51,17 @@ if __name__ == '__main__':
             result_hash = "%s:res:%s:%s:%s" % (exp_root, all_vars["Row"], all_vars["Nozzle"], all_vars["LoopID"])
 
             results = {}
-            results["volume"] = "%s" % ('%.2f' % (randint(0, 99)/100) )
-            results["vel"] = "%s" % ('%.2f' % (randint(30, 70)/10) )
+
+            # volume in femptaliters
+            volume = (randint(400, 1200))
+            # velocity in mm/s
+            vel    = (randint(3000, 7000))
+
+            results["volume"] = str(volume)
+            results["vel"] = str(vel)
+
+            results["Row"] = all_vars["Row"]
+            results["Nozzle"] = all_vars["Nozzle"]
 
             results["Sample Clock"] = all_vars["Sample Clock"]
             results["BitmapFile"] = all_vars["BitmapFile"]
@@ -63,6 +73,12 @@ if __name__ == '__main__':
             r.hmset(result_hash, results)
             r.sadd('results', result_hash)
 
+            vel_hash = "%s:res_vel_set" % (exp_root)
+            r.zadd(vel_hash, vel, result_hash)
+            volume_hash = "%s:res_vol_set" % (exp_root)
+            r.zadd(volume_hash, volume, result_hash)
+
+
         else:
             logger.warn("Nothing to process.")
-            time.sleep(2)
+            #time.sleep(2)
