@@ -49,7 +49,7 @@ if __name__ == '__main__':
         "BitmapFile": "recipe/g2x4_full_head_dif.bmp",
         "ImageFile": "DispenserOpt_00005_2017-09-22_11.37.33.png",
         "Nozzle": "2.000000",
-        "LoopID": "5",
+        "Loop_Count": "5",
         "Global Voltage": "18.700000",
         "PD_delay_us": "290.000000",
         "Waveform": "F661_DS.txt",
@@ -63,12 +63,12 @@ if __name__ == '__main__':
     #exp_root = "%s:%s:%d" % (dt.datetime.now().strftime("%Y-%m-%d"), 'SN987234', 1)
     exp_root = "%s:%d:%s:%s:%s" % (exp_vars["ExperimentID"], 1, exp_vars["HeadSerialNumber"],exp_vars["NozzleSize"], exp_vars["MonomerID"])
 
-    r.hmset(exp_root, exp_vars)
+    r.hmset("%s:base_vars" % exp_root, exp_vars)
     r.sadd('experiments_started', exp_root)
 
     num_loops = 1000
     for loop_cnt in range(1, num_loops+1):
-        loop_vars["LoopID"] = str(loop_cnt)
+        loop_vars["Loop_Count"] = str(loop_cnt)
         loop_vars["Sample Clock"] = '%3.3f' % (randint(0, 30)+random())
         loop_vars["Global Voltage"] = '%3.3f' % (randint(16, 25)+random())
         loop_vars["PD_delay_us"] = '%d' % (randint(0, 10)*10)

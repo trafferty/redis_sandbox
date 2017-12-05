@@ -30,6 +30,13 @@ if __name__ == '__main__':
 
     r = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 
+    completed_list = r.smembers('experiments_completed')
+
+    for exp_root in completed_list:
+
+
+
+
     while not done:
         #loop_hash = r.lpop('new_image_data')
         l, loop_hash = r.blpop('new_image_data', 2)
@@ -66,7 +73,7 @@ if __name__ == '__main__':
             results["Global Voltage"] = all_vars["Global Voltage"]
             results["PD_delay_us"] = all_vars["PD_delay_us"]
             results["Waveform"] = all_vars["Waveform"]
-            results["Phase"] = utils.getNozzlePhase(int(all_vars["Nozzle"]))
+            results["Phase"] = all_vars["Phase"]
 
             r.hmset(result_hash, results)
             r.sadd('results', result_hash)
